@@ -1,0 +1,161 @@
+import jarrasYCarpas.*
+import personas.*
+import marcas.*
+
+describe "Prueba fiesta" {
+
+	const yamil = new Aleman()
+	const ramiro = new Aleman()
+	const maxi = new Belga()
+	const adriana = new Checo()
+	
+	const corona = new Rubia()
+	const hofbrau = new Roja()
+	const guinnes = new Negra()
+	
+	const c1 = new Carpa()
+	const c2 = new Carpa()
+	
+	const jarra1 = new Jarra()
+	const jarra2 = new Jarra()
+	const jarra3 = new Jarra()
+		
+	fixture {
+		
+		yamil.gustaMusica(true)
+		yamil.agregarJarra(jarra1)
+		yamil.peso(123)
+		yamil.nivelAguante(9)
+		yamil.nacionalidad("Alemania")
+		
+		
+		ramiro.gustaMusica(true)
+		ramiro.peso(70)
+		ramiro.nivelAguante(5)
+		ramiro.nacionalidad("Alemania")
+		
+		maxi.gustaMusica(true)
+		maxi.peso(90)
+		maxi.nivelAguante(2)
+		maxi.nacionalidad("Belgica")
+	
+		adriana.gustaMusica(false)
+		adriana.peso(100)
+		adriana.nivelAguante(4)
+		adriana.nacionalidad("Checoslovaquia")
+		
+		corona.marca("corona")
+		corona.gradRubia(0.08)
+		corona.pais("Alemania")
+		hofbrau.contenidoLupulo(0.016)
+		hofbrau.marca("hofbrau")
+		hofbrau.pais("Belgica")
+		guinnes.marca("guinnes")
+		guinnes.contenidoLupulo(0.05)
+		guinnes.pais("Checoslovaquia")
+		
+		
+		yamil.agregarMarcasQGusta(corona.marca())
+		maxi.agregarMarcasQGusta(corona.marca())
+		adriana.agregarMarcasQGusta(guinnes.marca())
+		
+		jarra1.marca(corona)
+		jarra1.capacidad(0.5)
+		jarra2.marca(hofbrau)
+		jarra2.capacidad(0.5)
+		jarra3.marca(guinnes)
+		jarra3.capacidad(1)
+		
+		c1.tieneMusica(true)
+		c1.agregarPersona(yamil)
+		c1.marca(corona.marca())
+		c2.tieneMusica(false)
+		c2.marca(hofbrau.marca())
+		
+		gradMundialCerveNegra.graducacionReglamentaria(0.032)
+		
+		}
+
+	test "punto1 Contenido alcohol jarra cerveza Hofbrau" {
+		yamil.agregarJarra(jarra2)
+		
+		assert.equals(0.04, jarra2.contenidoAlcohol())
+	}
+
+	test "punto2 el alcohol que ingirio una persona por las jarras que tomo" {
+		yamil.agregarJarra(jarra2)
+		
+		assert.equals(0.08,yamil.alcoholIngerido())
+	}
+	
+	test "punto3 saber si una persona esta ebria" {
+		yamil.agregarJarra(jarra2)
+		
+		assert.that(yamil.estaEbria())
+	}
+	
+	test "punto4 una personar quiere entrar a una carpa" {
+		//numeros impar de alemanes
+		c1.limiteCarpaPersona(2)
+		c1.agregarPersona(ramiro)
+		c1.quitarPersona(yamil)
+		assert.notThat(yamil.quiereEntrar(c1))
+	}
+//	
+//
+//	test "tiene musica la carpa? 4c" {
+//		assert.that(c1.tieneMusica())
+//	}
+//	
+//	test "persona le gusta musica 4e" {
+//		assert.that(yamil.gustaMusica())
+//	}	
+//	
+//	test "comparar musca persona con musica carpa 4d" {
+//		assert.that(yamil.gustaMusicaCarpa(c1))
+//	}
+//	
+//	test "cantidad de personas en la carpa 4f" {
+//		assert.equals(1,c1.cantidadPersona())
+//	}
+//	
+//	test "cantidad de personas pares en la carpa 4g" {
+//		assert.notThat(c1.personasPares())
+//	}	
+//	
+//	test "chequeo aleman por numero par 4h" {
+//		assert.notThat(yamil.entrarCarpa(c1))
+//	}
+	test "punto5 carpa deja entrar si no supera limite y esta ebria" {
+		ramiro.agregarJarra(jarra1)
+		ramiro.agregarJarra(jarra2)
+		c1.limiteCarpaPersona(2)
+		
+		assert.notThat(c1.dejarEntrar(ramiro))
+	}
+	test "punto6 persona quiere entrar y la carpa lo deja"{
+		c1.limiteCarpaPersona(3)
+		
+		assert.that(maxi.quiereEntrar(c1))	
+	}
+	test "punto7 "{
+		ramiro.agregarJarra(jarra1)
+		ramiro.agregarJarra(jarra2)
+		
+		assert.throwsException({ramiro.entroCarpa(c1) })
+		assert.throwsExceptionWithMessage("No puede Entrar",{ramiro.entroCarpa(c1) })
+	}
+	test "punto8 Ebrios empedernidos"{
+		adriana.agregarJarra(jarra3)
+		
+		assert.that(adriana.ebrioEmpedernido())
+		assert.notThat(yamil.ebrioEmpedernido())
+	}
+	test "punto9 Es Patriota" {
+		ramiro.agregarJarra(jarra1)
+		ramiro.agregarJarra(jarra2)
+		
+	//	assert.equals("Belgica", jarra1.pais())
+		assert.notThat(ramiro.esPatriota())
+	}
+}
